@@ -1,0 +1,292 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "PA YAML",
+  "scopeName": "source.pa-yaml",
+  "fileTypes": ["pa.yaml"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#block-scalar-indicator" },
+    { "include": "#formula-line" },
+    { "include": "#key-formula-value" },
+    { "include": "#key-block-formula" },
+    { "include": "#key-control-value" },
+    { "include": "#key-metadata-value" },
+    { "include": "#structural-key" },
+    { "include": "#pa-key" },
+    { "include": "#list-item-key" },
+    { "include": "#editor-state-item" },
+    { "include": "#yaml-quoted-string" }
+  ],
+  "repository": {
+
+    "comment": {
+      "match": "^\\s*#.*$",
+      "name": "comment.line.number-sign.pa-yaml"
+    },
+
+    "block-scalar-indicator": {
+      "match": "\\|[\\-+]?\\s*$",
+      "name": "keyword.control.flow.block-scalar.pa-yaml"
+    },
+
+    "formula-line": {
+      "comment": "Lines in block scalars starting with = (multi-line formulas)",
+      "begin": "^(\\s+)(=)",
+      "beginCaptures": {
+        "2": { "name": "keyword.operator.formula-prefix.powerfx" }
+      },
+      "end": "$",
+      "contentName": "meta.formula.powerfx",
+      "patterns": [
+        { "include": "#powerfx" }
+      ]
+    },
+
+    "key-formula-value": {
+      "comment": "PropertyName: =formula (inline formula after key)",
+      "begin": "^(\\s*-?\\s*)([A-Za-z_][A-Za-z0-9_]*)(:\\s+)(=)",
+      "beginCaptures": {
+        "2": { "name": "variable.other.property.pa-yaml" },
+        "3": { "name": "punctuation.separator.key-value.pa-yaml" },
+        "4": { "name": "keyword.operator.formula-prefix.powerfx" }
+      },
+      "end": "$",
+      "contentName": "meta.formula.powerfx",
+      "patterns": [
+        { "include": "#powerfx" }
+      ]
+    },
+
+    "key-block-formula": {
+      "comment": "PropertyName: |- (block scalar formula indicator)",
+      "match": "^(\\s*)([A-Za-z_][A-Za-z0-9_]*)(:\\s+)(\\|[\\-+]?)\\s*$",
+      "captures": {
+        "2": { "name": "variable.other.property.pa-yaml" },
+        "3": { "name": "punctuation.separator.key-value.pa-yaml" },
+        "4": { "name": "keyword.control.flow.block-scalar.pa-yaml" }
+      }
+    },
+
+    "key-control-value": {
+      "comment": "Control: TypeName[@version]",
+      "match": "^(\\s*)(Control)(:\\s+)([A-Za-z][A-Za-z0-9]*/)?([A-Za-z][A-Za-z0-9_.]*)(@\\d+\\.\\d+\\.\\d+)?\\s*$",
+      "captures": {
+        "2": { "name": "support.type.property-name.pa-yaml" },
+        "3": { "name": "punctuation.separator.key-value.pa-yaml" },
+        "4": { "name": "entity.name.namespace.control-prefix.pa-yaml" },
+        "5": { "name": "entity.name.type.control.pa-yaml" },
+        "6": { "name": "constant.numeric.version.pa-yaml" }
+      }
+    },
+
+    "key-metadata-value": {
+      "comment": "Variant/Layout/IsLocked/Group/MetadataKey/DefinitionType/ComponentName: value",
+      "match": "^(\\s*)(Variant|Layout|IsLocked|Group|MetadataKey|DefinitionType|ComponentName|ComponentLibraryUniqueName)(:\\s+)(.+)$",
+      "captures": {
+        "2": { "name": "support.type.property-name.pa-yaml" },
+        "3": { "name": "punctuation.separator.key-value.pa-yaml" },
+        "4": { "name": "string.unquoted.value.pa-yaml" }
+      }
+    },
+
+    "structural-key": {
+      "comment": "Top-level PA YAML structural keys",
+      "match": "^(Screens|App|ComponentDefinitions|DataSources|EditorState)(:\\s*)$",
+      "captures": {
+        "1": { "name": "keyword.control.structural.pa-yaml" },
+        "2": { "name": "punctuation.separator.key-value.pa-yaml" }
+      }
+    },
+
+    "pa-key": {
+      "comment": "PA structural sub-keys and entity name keys",
+      "match": "^(\\s*-?\\s*)([A-Za-z_][A-Za-z0-9_ ]*)(:\\s*)$",
+      "captures": {
+        "2": { "name": "entity.name.tag.pa-yaml" },
+        "3": { "name": "punctuation.separator.key-value.pa-yaml" }
+      }
+    },
+
+    "list-item-key": {
+      "comment": "Children list items: - controlName:",
+      "match": "^(\\s*)(-)\\s+([A-Za-z_][A-Za-z0-9_ ]*)(:\\s*)$",
+      "captures": {
+        "2": { "name": "punctuation.definition.list.begin.pa-yaml" },
+        "3": { "name": "entity.name.tag.control-name.pa-yaml" },
+        "4": { "name": "punctuation.separator.key-value.pa-yaml" }
+      }
+    },
+
+    "editor-state-item": {
+      "comment": "EditorState list items: - screenName",
+      "match": "^(\\s*)(-)\\s+([A-Za-z_][A-Za-z0-9_ ]*)\\s*$",
+      "captures": {
+        "2": { "name": "punctuation.definition.list.begin.pa-yaml" },
+        "3": { "name": "string.unquoted.screen-name.pa-yaml" }
+      }
+    },
+
+    "yaml-quoted-string": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.pa-yaml",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            { "match": "\\\\.", "name": "constant.character.escape.pa-yaml" }
+          ]
+        },
+        {
+          "name": "string.quoted.single.pa-yaml",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            { "match": "''", "name": "constant.character.escape.pa-yaml" }
+          ]
+        }
+      ]
+    },
+
+    "powerfx": {
+      "patterns": [
+        { "include": "#pfx-comment" },
+        { "include": "#pfx-string" },
+        { "include": "#pfx-interpolated-string" },
+        { "include": "#pfx-builtin-enum" },
+        { "include": "#pfx-function-call" },
+        { "include": "#pfx-keyword" },
+        { "include": "#pfx-boolean" },
+        { "include": "#pfx-color-literal" },
+        { "include": "#pfx-number" },
+        { "include": "#pfx-operator" },
+        { "include": "#pfx-punctuation" },
+        { "include": "#pfx-disambiguator" },
+        { "include": "#pfx-property-access" }
+      ]
+    },
+
+    "pfx-comment": {
+      "patterns": [
+        {
+          "match": "//.*$",
+          "name": "comment.line.double-slash.powerfx"
+        },
+        {
+          "begin": "/\\*",
+          "end": "\\*/",
+          "name": "comment.block.powerfx"
+        }
+      ]
+    },
+
+    "pfx-string": {
+      "comment": "Power Fx strings use \"\" to escape double quotes (not backslash)",
+      "name": "string.quoted.double.powerfx",
+      "begin": "\"",
+      "end": "\"",
+      "patterns": [
+        {
+          "match": "\"\"",
+          "name": "constant.character.escape.powerfx"
+        }
+      ]
+    },
+
+    "pfx-interpolated-string": {
+      "comment": "Power Fx interpolated strings: $\"Hello {User().FullName}\"",
+      "name": "string.interpolated.powerfx",
+      "begin": "\\$\"",
+      "end": "\"",
+      "patterns": [
+        { "match": "\"\"", "name": "constant.character.escape.powerfx" },
+        {
+          "begin": "\\{",
+          "beginCaptures": { "0": { "name": "punctuation.section.interpolation.begin.powerfx" } },
+          "end": "\\}",
+          "endCaptures": { "0": { "name": "punctuation.section.interpolation.end.powerfx" } },
+          "contentName": "meta.embedded.expression.powerfx",
+          "patterns": [
+            { "include": "#powerfx" }
+          ]
+        }
+      ]
+    },
+
+    "pfx-builtin-enum": {
+      "comment": "Built-in enums: Color.Red, DisplayMode.Edit, Align.Center, etc.",
+      "match": "\\b(Color|DisplayMode|Align|VerticalAlign|TextMode|TextFormat|Layout|Overflow|ScreenTransition|Font|FontWeight|BorderStyle|PenMode|ImagePosition|ImageRotation|BarcodeType|MapStyle|Icon|LoadingSpinner|Transition|Direction|Notify|NotificationType|DateTimeZone|StartOfWeek|SortOrder|Match|MatchOptions|JSONFormat|Trace|TraceSeverity|ErrorKind|EditableEnum|FormMode|LabelPosition|DataCardValue|Live|ListItemTemplate|SelectedState|ViewMode|Themes)\\.[A-Za-z][A-Za-z0-9]*\\b",
+      "name": "support.constant.enum.powerfx"
+    },
+
+    "pfx-function-call": {
+      "comment": "Power Fx function calls — uppercase start convention",
+      "match": "\\b(Abs|Acceleration|Acos|Acot|AddColumns|AIClassify|AIExtract|AIReply|AISentiment|AISummarize|AITranslate|And|App|As|Assert|AsType|Atan|Atan2|Average|Back|Blank|Boolean|Calendar|Char|Choices|Clear|ClearCollect|ClearData|Clock|Coalesce|Collect|ColorFade|ColorValue|Column|ColumnNames|Compass|Concat|Concatenate|Concurrent|Connection|Copy|Cos|Cot|Count|CountA|CountIf|CountRows|DataSourceInfo|Date|DateAdd|DateDiff|DateTime|DateTimeValue|DateValue|Day|Dec2Hex|Defaults|Degrees|Disable|Distinct|Download|DropColumns|EDate|EditForm|Enable|EncodeHTML|EncodeUrl|EndsWith|EOMonth|Error|Errors|Exit|Exp|Filter|Find|First|FirstN|ForAll|GroupBy|GUID|HashTags|Hex2Dec|Host|Hour|If|IfError|Index|Int|IsBlank|IsBlankOrError|IsEmpty|IsError|IsMatch|IsNumeric|ISOWeekNum|IsToday|IsType|IsUTCToday|JSON|Language|Last|LastN|Launch|Left|Len|Ln|LoadData|Location|Log|LookUp|Lower|Match|MatchAll|Max|Mid|Min|Minute|Mod|Month|Navigate|NewForm|Not|Notify|Now|Or|Param|ParseJSON|Patch|PDF|Pi|PlainText|Power|Proper|Radians|Rand|RandBetween|ReadNFC|RecordInfo|Refresh|Relate|Remove|RemoveIf|RenameColumns|Replace|RequestHide|Reset|ResetForm|Revert|RGBA|Right|Round|RoundDown|RoundUp|SaveData|Search|Second|Select|SendAppNotification|Sequence|Set|SetFocus|SetProperty|ShowColumns|ShowHostInfo|Shuffle|Sin|Sort|SortByColumns|Split|Sqrt|StartsWith|StdevP|Substitute|SubmitForm|Sum|Switch|Table|Tan|Text|Time|TimeValue|TimeZoneOffset|Today|Trace|Trim|TrimEnds|Trunc|Ungroup|UniChar|Unrelate|Update|UpdateContext|UpdateIf|Upper|User|UTCNow|UTCToday|Validate|Value|VarP|ViewForm|Weekday|WeekNum|With|Year)\\s*(?=\\()",
+      "captures": {
+        "1": { "name": "entity.name.function.powerfx" }
+      }
+    },
+
+    "pfx-keyword": {
+      "match": "\\b(If|Switch|As|in|exactin|Self|Parent|ThisItem|ThisRecord|And|Or|Not)\\b",
+      "name": "keyword.control.powerfx"
+    },
+
+    "pfx-boolean": {
+      "match": "\\b(true|false)\\b",
+      "name": "constant.language.boolean.powerfx"
+    },
+
+    "pfx-color-literal": {
+      "comment": "Named color constants: Color.Red or bare RGBA()",
+      "match": "\\bRGBA\\s*(?=\\()",
+      "name": "entity.name.function.powerfx"
+    },
+
+    "pfx-number": {
+      "match": "\\b\\d+(\\.\\d+)?\\b",
+      "name": "constant.numeric.powerfx"
+    },
+
+    "pfx-operator": {
+      "patterns": [
+        {
+          "match": "<>|>=|<=|&&|\\|\\|",
+          "name": "keyword.operator.comparison.powerfx"
+        },
+        {
+          "match": "[+\\-*/^%]",
+          "name": "keyword.operator.arithmetic.powerfx"
+        },
+        {
+          "match": "&",
+          "name": "keyword.operator.concatenation.powerfx"
+        },
+        {
+          "match": "[=<>!]",
+          "name": "keyword.operator.comparison.powerfx"
+        }
+      ]
+    },
+
+    "pfx-punctuation": {
+      "patterns": [
+        { "match": "[;,]", "name": "punctuation.separator.powerfx" },
+        { "match": "[()]", "name": "punctuation.brackets.round.powerfx" },
+        { "match": "[{}]", "name": "punctuation.definition.record.powerfx" },
+        { "match": "[\\[\\]]", "name": "punctuation.definition.table.powerfx" }
+      ]
+    },
+
+    "pfx-disambiguator": {
+      "comment": "Power Fx @ disambiguation operator: [@DataSource]",
+      "match": "\\[@[A-Za-z_][A-Za-z0-9_]*\\]",
+      "name": "variable.other.disambiguated.powerfx"
+    },
+
+    "pfx-property-access": {
+      "comment": "Property/field access after dot: .FieldName",
+      "match": "(?<=\\.)[A-Za-z_][A-Za-z0-9_]*",
+      "name": "variable.other.property.powerfx"
+    }
+  }
+}

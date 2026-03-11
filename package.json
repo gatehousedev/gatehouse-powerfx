@@ -1,0 +1,32 @@
+{
+  "name": "gatehouse-powerfx",
+  "displayName": "Gatehouse Power Fx",
+  "description": "Syntax highlighting for Power Apps .pa.yaml files with embedded Power Fx formulas",
+  "version": "0.0.1",
+  "publisher": "gatehouse",
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "pa-yaml",
+        "aliases": ["PA YAML", "Power Apps YAML"],
+        "filenamePatterns": ["*.pa.yaml"],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icons/pa-yaml-light.svg",
+          "dark": "./icons/pa-yaml-dark.svg"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "pa-yaml",
+        "scopeName": "source.pa-yaml",
+        "path": "./syntaxes/pa-yaml.tmLanguage.json"
+      }
+    ]
+  }
+}
