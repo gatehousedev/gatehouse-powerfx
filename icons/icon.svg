@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Background -->
+  <rect width="128" height="128" rx="16" fill="#0f172a"/>
+  <!-- Gatehouse towers -->
+  <rect x="16" y="52" width="24" height="52" rx="2" fill="#1e293b"/>
+  <rect x="88" y="52" width="24" height="52" rx="2" fill="#1e293b"/>
+  <!-- Central keep -->
+  <rect x="44" y="32" width="40" height="24" rx="2" fill="#1e293b"/>
+  <!-- Gate (blue accent) -->
+  <rect x="44" y="62" width="40" height="42" rx="2" fill="#3b82f6"/>
+  <!-- Gate opening -->
+  <rect x="54" y="72" width="20" height="32" rx="2" fill="#0f172a"/>
+  <!-- Battlements - left tower -->
+  <rect x="16" y="46" width="9" height="8" fill="#1e293b"/>
+  <rect x="31" y="46" width="9" height="8" fill="#1e293b"/>
+  <!-- Battlements - right tower -->
+  <rect x="88" y="46" width="9" height="8" fill="#1e293b"/>
+  <rect x="103" y="46" width="9" height="8" fill="#1e293b"/>
+  <!-- Battlements - keep -->
+  <rect x="44" y="26" width="9" height="8" fill="#1e293b"/>
+  <rect x="75" y="26" width="9" height="8" fill="#1e293b"/>
+  <!-- fx text in gate -->
+  <text x="64" y="94" text-anchor="middle" font-family="Consolas, monospace" font-weight="bold" font-size="18" fill="#3b82f6">fx</text>
+</svg>

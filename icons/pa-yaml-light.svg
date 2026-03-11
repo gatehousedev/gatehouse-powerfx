@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="none">
+  <!-- File icon with fx badge - light theme -->
+  <path d="M3 1h7l3 3v11H3V1z" fill="#e2e8f0" stroke="#94a3b8" stroke-width="0.5"/>
+  <path d="M10 1v3h3" fill="none" stroke="#94a3b8" stroke-width="0.5"/>
+  <rect x="4" y="9" width="8" height="5" rx="1" fill="#3b82f6"/>
+  <text x="8" y="13" text-anchor="middle" font-family="Consolas, monospace" font-weight="bold" font-size="4" fill="#ffffff">fx</text>
+</svg>

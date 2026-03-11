@@ -3,11 +3,30 @@
   "displayName": "Gatehouse Power Fx",
   "description": "Syntax highlighting for Power Apps .pa.yaml files with embedded Power Fx formulas",
   "version": "0.0.1",
-  "publisher": "gatehouse",
+  "publisher": "gatehousedev",
+  "license": "MIT",
+  "icon": "icons/icon.png",
   "engines": {
     "vscode": "^1.80.0"
   },
   "categories": ["Programming Languages"],
+  "keywords": [
+    "power apps",
+    "power fx",
+    "pa.yaml",
+    "canvas apps",
+    "power platform",
+    "syntax highlighting",
+    "microsoft"
+  ],
+  "homepage": "https://gatehousedev.co.uk",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gatehousedev/gatehouse-powerfx"
+  },
+  "bugs": {
+    "url": "https://github.com/gatehousedev/gatehouse-powerfx/issues"
+  },
   "contributes": {
     "languages": [
       {
