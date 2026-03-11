@@ -1,0 +1,953 @@
+# ============================================================================
+# PA YAML TextMate Grammar Edge-Case Test File
+# ============================================================================
+# Open this file in VS Code with the pa-yaml grammar active.
+# Each section tests specific grammar rules from pa-yaml.tmLanguage.json.
+# Verify that highlighted tokens match the expected scopes listed in comments.
+# ============================================================================
+
+# --- Section 1: Structural Keys (structural-key rule) -----------------------
+# Expected scope: keyword.control.structural.pa-yaml
+# These must appear at column 0 with a trailing colon and no value.
+
+Screens:
+App:
+ComponentDefinitions:
+DataSources:
+EditorState:
+
+# --- Section 2: Control Type Variations (key-control-value rule) -------------
+# Expected: support.type.property-name ("Control"),
+#           entity.name.type.control ("GroupContainer" etc.),
+#           entity.name.namespace.control-prefix (namespace/),
+#           constant.numeric.version (@x.y.z)
+
+  # 2a. Bare control type (no namespace, no version)
+  Control: GroupContainer
+  Control: Label
+  Control: Button
+  Control: Gallery
+  Control: TextInput
+  Control: DatePicker
+  Control: Toggle
+  Control: Slider
+  Control: Image
+  Control: Icon
+
+  # 2b. Control type with version
+  Control: Label@3.0.0
+  Control: Button@1.2.3
+  Control: GroupContainer@0.1.0
+
+  # 2c. Control type with namespace (PCF controls)
+  Control: Microsoft/FluentButton
+  Control: Creator/CustomGrid
+  Control: Contoso/MapControl
+
+  # 2d. Control type with namespace AND version
+  Control: Microsoft/FluentButton@2.0.1
+  Control: Creator/CustomGrid@1.0.0
+
+  # 2e. Control with dots in name (PCF naming convention)
+  Control: Microsoft.CoreControls.FluentV9.Button
+  Control: pcf_cc_123.MyControl
+
+  # 2f. Control with underscores
+  Control: My_Custom_Control
+  Control: Microsoft/Fluent_Button@1.0.0
+
+# --- Section 3: Metadata Keys (key-metadata-value rule) ----------------------
+# Expected: support.type.property-name (key), string.unquoted.value (value)
+
+  Variant: labelVariant
+  Layout: Horizontal
+  IsLocked: true
+  Group: HeaderGroup
+  DefinitionType: CanvasComponent
+  ComponentName: cmp_Header
+  ComponentLibraryUniqueName: MyComponentLibrary_abc123
+  MetadataKey: CustomValue_123
+
+  # Metadata with spaces and special chars in value
+  Variant: My Custom Variant Name
+  Layout: vertical auto-resize
+  Group: Group With Spaces And Numbers 123
+
+# --- Section 4: PA Keys (pa-key rule) ----------------------------------------
+# Expected: entity.name.tag.pa-yaml
+# These are sub-keys ending with colon and no value on the same line.
+
+  Properties:
+  Children:
+  scr_Home:
+  scr_Details_Screen:
+  cmp_Header Component:
+  btn Save Button:
+  My Control With Spaces:
+  _privateKey:
+
+# --- Section 5: Children Lists (list-item-key rule) --------------------------
+# Expected: punctuation.definition.list.begin ("-"),
+#           entity.name.tag.control-name
+
+  Children:
+    - btn_Submit:
+    - lbl_Title:
+    - gal_Items:
+    - cmp_Header Component:
+    - My Control With Spaces:
+    - _privateControl:
+    - ctrl123:
+
+# --- Section 6: EditorState Items (editor-state-item rule) -------------------
+# Expected: punctuation.definition.list.begin ("-"),
+#           string.unquoted.screen-name
+
+EditorState:
+  - scr_Home
+  - scr_Details
+  - scr Settings Screen
+  - cmp_Header
+  - My Screen With Spaces
+
+# --- Section 7: Inline Formulas (key-formula-value rule) ---------------------
+# Expected: variable.other.property (key), keyword.operator.formula-prefix ("="),
+#           meta.formula.powerfx (formula content)
+
+  # 7a. Simple inline formulas
+  Text: =Self.Text
+  Visible: =true
+  Width: =Parent.Width
+  Height: =640
+  X: =0
+  Y: =100
+  Fill: =RGBA(255, 255, 255, 1)
+  Color: =Color.Black
+
+  # 7b. Complex inline formulas
+  Text: =If(IsBlank(ThisItem.Name), "N/A", ThisItem.Name)
+  Visible: =CountRows(Filter(colItems, Status = "Active")) > 0
+  Items: =Sort(Filter(colProjects, Owner = User().Email), CreatedDate)
+  OnSelect: =Navigate(scr_Details, ScreenTransition.Fade)
+  Width: =Parent.Width - Self.X * 2
+  Default: =Text(Now(), "dd/mm/yyyy")
+
+# --- Section 8: Block Scalar Formulas (key-block-formula + formula-line) -----
+# Expected: variable.other.property (key), keyword.control.flow.block-scalar ("|-"),
+#           keyword.operator.formula-prefix ("="), meta.formula.powerfx
+
+  # 8a. Standard block scalar with |-
+  OnSelect: |-
+    =If(
+        IsBlank(txtName.Text),
+        Notify("Name is required", NotificationType.Error),
+        Patch(
+            colItems,
+            Defaults(colItems),
+            {
+                Name: txtName.Text,
+                Date: DatePicker1.SelectedDate,
+                Status: "Active"
+            }
+        )
+    )
+
+  # 8b. Block scalar with | (no chomping indicator)
+  Text: |
+    =Concatenate(
+        "Hello, ",
+        User().FullName,
+        "!"
+    )
+
+  # 8c. Block scalar with |+ (keep trailing newlines)
+  Tooltip: |+
+    =If(
+        Self.Visible,
+        "This item is visible",
+        "This item is hidden"
+    )
+
+  # 8d. Multi-line formula with nested calls
+  Items: |-
+    =Filter(
+        Sort(
+            AddColumns(
+                colProjects,
+                "FullName",
+                Concatenate(FirstName, " ", LastName)
+            ),
+            FullName
+        ),
+        Status <> "Archived"
+    )
+
+# --- Section 9: Nested Function Calls (powerfx: pfx-function-call) ----------
+# Expected: entity.name.function.powerfx for each function name
+
+  # 9a. Double nesting
+  Items: =Filter(Sort(colItems, Name), Active = true)
+
+  # 9b. Triple nesting
+  Text: =Text(First(Filter(colData, ID = varID)).Value, "#,##0.00")
+
+  # 9c. Nested with multiple args
+  Result: =If(IsBlank(LookUp(colUsers, Email = User().Email)), "Guest", "Member")
+
+  # 9d. ForAll with nested Patch
+  OnSelect: |-
+    =ForAll(
+        Filter(colItems, Selected),
+        Patch(
+            colItems,
+            ThisRecord,
+            {Status: "Approved"}
+        )
+    )
+
+  # 9e. Concurrent with multiple branches
+  OnVisible: |-
+    =Concurrent(
+        ClearCollect(colUsers, Users),
+        ClearCollect(colProjects, Projects),
+        Set(varCurrentUser, LookUp(Users, Email = User().Email))
+    )
+
+# --- Section 10: String Edge Cases (pfx-string rule) ------------------------
+# Expected: string.quoted.double.powerfx, constant.character.escape.powerfx ("")
+
+  # 10a. Simple string
+  Text: ="Hello World"
+
+  # 10b. Empty string
+  Text: =""
+
+  # 10c. Escaped quotes (Power Fx uses "" not \")
+  Text: ="She said ""hello"" to me"
+
+  # 10d. Double escaped — four consecutive quotes
+  Text: ="""" & varName & """"
+
+  # 10e. String with special characters
+  Text: ="Price: $100 @ 50% off! #sale & more"
+
+  # 10f. String with newline chars (literal text)
+  Text: ="Line1" & Char(10) & "Line2"
+
+  # 10g. String with Unicode
+  Text: ="Cafe with accents"
+
+  # 10h. Very long string
+  Text: ="This is a very long string that might wrap in the editor and we want to make sure the grammar handles it correctly without breaking the highlighting"
+
+  # 10i. String immediately followed by operator
+  Visible: ="Active"=drp_Status.Selected.Value
+
+  # 10j. Adjacent strings
+  Text: ="Hello" & " " & "World"
+
+# --- Section 11: Interpolated Strings (pfx-interpolated-string rule) ---------
+# Expected: string.interpolated.powerfx,
+#           punctuation.section.interpolation.begin/end,
+#           meta.embedded.expression.powerfx (inside {})
+
+  # 11a. Simple interpolation
+  Text: =$"Hello {User().FullName}"
+
+  # 11b. Multiple interpolations
+  Text: =$"Name: {txtFirst.Text} {txtLast.Text}, Age: {Value(txtAge.Text)}"
+
+  # 11c. Nested function call inside interpolation
+  Text: =$"Count: {CountRows(Filter(colItems, Active = true))}"
+
+  # 11d. Expression inside interpolation
+  Text: =$"Total: {Sum(colItems, Amount) * 1.2}"
+
+  # 11e. Interpolated string with escaped quotes
+  Text: =$"She said ""{txtInput.Text}"" loudly"
+
+  # 11f. Empty interpolation expression
+  Text: =$"Value: {Blank()}"
+
+  # 11g. Nested braces — record inside interpolation
+  Text: =$"Result: {Text(LookUp(colItems, {ID: varID}).Name)}"
+
+  # 11h. Interpolation with boolean
+  Text: =$"Is Active: {If(varActive, "Yes", "No")}"
+
+  # 11i. Interpolation at start and end
+  Text: =$"{varPrefix}content{varSuffix}"
+
+# --- Section 12: Enum Access (pfx-builtin-enum rule) ------------------------
+# Expected: support.constant.enum.powerfx
+# Each enum namespace from the grammar should highlight.
+
+  Fill: =Color.Red
+  Fill: =Color.Blue
+  Fill: =Color.Transparent
+  DisplayMode: =DisplayMode.Edit
+  DisplayMode: =DisplayMode.View
+  DisplayMode: =DisplayMode.Disabled
+  Align: =Align.Center
+  Align: =Align.Left
+  Align: =Align.Right
+  VerticalAlign: =VerticalAlign.Middle
+  TextMode: =TextMode.SingleLine
+  TextMode: =TextMode.MultiLine
+  TextMode: =TextMode.Password
+  TextFormat: =TextFormat.Number
+  Layout: =Layout.Horizontal
+  Layout: =Layout.Vertical
+  Overflow: =Overflow.Scroll
+  Overflow: =Overflow.Hidden
+  ScreenTransition: =ScreenTransition.Fade
+  ScreenTransition: =ScreenTransition.Cover
+  ScreenTransition: =ScreenTransition.None
+  Font: =Font.Verdana
+  FontWeight: =FontWeight.Bold
+  FontWeight: =FontWeight.Normal
+  FontWeight: =FontWeight.Semibold
+  BorderStyle: =BorderStyle.Solid
+  BorderStyle: =BorderStyle.Dashed
+  BorderStyle: =BorderStyle.Dotted
+  BorderStyle: =BorderStyle.None
+  PenMode: =PenMode.Draw
+  PenMode: =PenMode.Erase
+  ImagePosition: =ImagePosition.Fill
+  ImagePosition: =ImagePosition.Fit
+  ImageRotation: =ImageRotation.None
+  BarcodeType: =BarcodeType.QRCode
+  MapStyle: =MapStyle.Road
+  Icon: =Icon.Add
+  Icon: =Icon.Cancel
+  Icon: =Icon.Search
+  LoadingSpinner: =LoadingSpinner.Data
+  Transition: =Transition.Push
+  Direction: =Direction.Start
+  Notify: =Notify.Success
+  NotificationType: =NotificationType.Error
+  NotificationType: =NotificationType.Warning
+  NotificationType: =NotificationType.Information
+  NotificationType: =NotificationType.Success
+  DateTimeZone: =DateTimeZone.Local
+  DateTimeZone: =DateTimeZone.UTC
+  StartOfWeek: =StartOfWeek.Monday
+  SortOrder: =SortOrder.Ascending
+  SortOrder: =SortOrder.Descending
+  Match: =Match.Email
+  Match: =Match.Digit
+  MatchOptions: =MatchOptions.IgnoreCase
+  JSONFormat: =JSONFormat.IndentFour
+  Trace: =Trace.Information
+  TraceSeverity: =TraceSeverity.Warning
+  ErrorKind: =ErrorKind.NotFound
+  EditableEnum: =EditableEnum.Yes
+  FormMode: =FormMode.New
+  FormMode: =FormMode.Edit
+  FormMode: =FormMode.View
+  LabelPosition: =LabelPosition.Left
+  DataCardValue: =DataCardValue.Default
+  Live: =Live.Polite
+  ListItemTemplate: =ListItemTemplate.SingleLineA
+  SelectedState: =SelectedState.Default
+  ViewMode: =ViewMode.Default
+  Themes: =Themes.Default
+
+  # Enum in complex expression
+  Fill: =If(Self.Pressed, Color.DarkBlue, Color.Blue)
+  Mode: =If(varEditMode, DisplayMode.Edit, DisplayMode.View)
+
+# --- Section 13: Operators (pfx-operator rule) -------------------------------
+# Expected: keyword.operator.comparison, .arithmetic, .concatenation
+
+  # 13a. Comparison operators
+  Visible: =varA <> varB
+  Visible: =varA >= varB
+  Visible: =varA <= varB
+  Visible: =varA = varB
+  Visible: =varA > varB
+  Visible: =varA < varB
+
+  # 13b. Logical operators
+  Visible: =varA && varB
+  Visible: =varA || varB
+
+  # 13c. Arithmetic operators
+  Width: =varA + varB
+  Width: =varA - varB
+  Width: =varA * varB
+  Width: =varA / varB
+  Width: =varA ^ 2
+  Width: =Mod(varA, varB)
+
+  # 13d. Concatenation operator
+  Text: ="Hello" & " " & "World"
+  Text: =varFirst & " " & varLast
+
+  # 13e. Percentage
+  Width: =Parent.Width * 50%
+
+  # 13f. Negation (unary minus)
+  X: =-10
+  Width: =-(varA + varB)
+
+  # 13g. Mixed operators in complex expression
+  Result: =If(varA >= 10 && varB <> 0, (varA + varB) * 100 / varC, -1)
+
+  # 13h. Not-equal combined with string
+  Visible: =ThisItem.Status <> "Closed" && ThisItem.Owner <> ""
+
+# --- Section 14: Comments in Power Fx (pfx-comment rule) --------------------
+# Expected: comment.line.double-slash.powerfx, comment.block.powerfx
+
+  # 14a. Line comment after formula
+  Width: =Parent.Width // full width
+
+  # 14b. Line comment in block scalar
+  OnSelect: |-
+    =// This is a navigation action
+    =Navigate(scr_Home, ScreenTransition.Fade)
+
+  # 14c. Block comment in formula
+  Text: =/* greeting */ "Hello" & /* separator */ " " & /* name */ varName
+
+  # 14d. Block comment spanning concept (inline)
+  Visible: =/* check visibility */ CountRows(colItems) > 0 /* has items */
+
+# --- Section 15: Disambiguator (pfx-disambiguator rule) ----------------------
+# Expected: variable.other.disambiguated.powerfx
+
+  # 15a. Simple disambiguator
+  Items: =[@colProjects]
+
+  # 15b. Disambiguator in Filter
+  Items: =Filter([@colItems], Status = "Active")
+
+  # 15c. Disambiguator in LookUp
+  Text: =LookUp([@colUsers], Email = User().Email).FullName
+
+  # 15d. Multiple disambiguators
+  Result: =CountRows([@colA]) + CountRows([@colB])
+
+  # 15e. Disambiguator with underscore
+  Items: =[@col_My_Data]
+
+# --- Section 16: Semicolons as Statement Separators -------------------------
+# Expected: punctuation.separator.powerfx for ";"
+
+  # 16a. Multiple statements with semicolons
+  OnSelect: |-
+    =Set(varLoading, true);
+    =ClearCollect(colItems, DataSource);
+    =Set(varLoading, false)
+
+  # 16b. Semicolons in inline formula
+  OnSelect: =Set(varA, 1); Set(varB, 2); Navigate(scr_Home)
+
+  # 16c. Semicolons inside function calls (EU locale separator)
+  Text: =Text(Now(); "dd/mm/yyyy")
+
+# --- Section 17: Self/Parent/ThisItem/ThisRecord Keywords --------------------
+# Expected: keyword.control.powerfx
+
+  # 17a. Self references
+  Width: =Self.Width
+  Fill: =If(Self.Pressed, Color.DarkBlue, Color.Blue)
+  Text: =Self.Text & " (modified)"
+
+  # 17b. Parent references
+  Width: =Parent.Width
+  Height: =Parent.Height - 40
+  X: =Parent.X + 10
+  Y: =Parent.Y
+
+  # 17c. ThisItem references
+  Text: =ThisItem.Name
+  Visible: =ThisItem.Active
+  Fill: =If(ThisItem.Status = "Urgent", Color.Red, Color.White)
+
+  # 17d. ThisRecord references
+  Text: =ThisRecord.Value
+  OnSelect: |-
+    =Patch(
+        colItems,
+        ThisRecord,
+        {Status: "Complete"}
+    )
+
+  # 17e. Combined keyword usage
+  Width: =If(ThisItem.Important, Parent.Width, Parent.Width / 2)
+
+# --- Section 18: Boolean Literals (pfx-boolean rule) -------------------------
+# Expected: constant.language.boolean.powerfx
+
+  Visible: =true
+  Visible: =false
+  Default: =If(varEditing, true, false)
+  Result: =true && false
+  Toggle: =Not(true)
+
+# --- Section 19: Number Literals (pfx-number rule) ---------------------------
+# Expected: constant.numeric.powerfx
+
+  # 19a. Integers
+  Width: =640
+  X: =0
+  Height: =100
+  Y: =999999
+
+  # 19b. Decimals
+  Width: =3.14
+  Height: =0.5
+  Opacity: =0.75
+  Scale: =1.0
+
+  # 19c. Numbers in expressions
+  Width: =Parent.Width - 20
+  Height: =If(varExpanded, 400, 200)
+  Result: =100 * 0.15
+
+# --- Section 20: RGBA Function (pfx-color-literal + pfx-function-call) ------
+# Expected: entity.name.function.powerfx for "RGBA"
+
+  Fill: =RGBA(255, 0, 0, 1)
+  Fill: =RGBA(0, 120, 212, 1)
+  Fill: =RGBA(0, 0, 0, 0.5)
+  Fill: =RGBA(255, 255, 255, 0)
+  BorderColor: =RGBA(200, 200, 200, 1)
+  HoverFill: =RGBA(0, 120, 212, 0.1)
+
+  # RGBA in conditional
+  Fill: =If(Self.Pressed, RGBA(0, 90, 158, 1), RGBA(0, 120, 212, 1))
+
+  # RGBA with ColorFade
+  Fill: =ColorFade(RGBA(0, 120, 212, 1), -20%)
+
+# --- Section 21: Blank/Empty Formulas ---------------------------------------
+# Edge cases for blank or minimal formulas
+
+  # 21a. Blank() function
+  Default: =Blank()
+
+  # 21b. IsBlank check
+  Visible: =IsBlank(txtInput.Text)
+
+  # 21c. IsBlankOrError
+  Visible: =IsBlankOrError(varResult)
+
+  # 21d. Coalesce for blank handling
+  Text: =Coalesce(ThisItem.Name, ThisItem.Title, "Unknown")
+
+  # 21e. Empty string vs Blank
+  Text: =If(IsBlank(varInput), "", varInput)
+
+# --- Section 22: Deeply Nested Parentheses -----------------------------------
+# Expected: punctuation.brackets.round.powerfx for all parens
+
+  # 22a. If with And/Or/Not
+  Visible: =If(And(Or(varA, varB), Not(varC)), true, false)
+
+  # 22b. Triple nested If
+  Text: =If(varA, "A", If(varB, "B", If(varC, "C", "Default")))
+
+  # 22c. Complex nested boolean
+  Visible: |-
+    =And(
+        Or(
+            And(varRole = "Admin", varActive),
+            And(varRole = "Manager", Not(varReadOnly))
+        ),
+        Not(
+            Or(varLocked, varArchived)
+        ),
+        CountRows(
+            Filter(
+                colPermissions,
+                User = User().Email
+            )
+        ) > 0
+    )
+
+  # 22d. Math nesting
+  Result: =Round(Sqrt(Power(varX, 2) + Power(varY, 2)), 2)
+
+# --- Section 23: Record Literals (pfx-punctuation: {}) -----------------------
+# Expected: punctuation.definition.record.powerfx for { }
+
+  # 23a. Simple record
+  OnSelect: =Set(varRecord, {Name: "test", Value: 42})
+
+  # 23b. Record with multiple types
+  OnSelect: |-
+    =Patch(
+        colItems,
+        Defaults(colItems),
+        {
+            Name: txtName.Text,
+            Active: true,
+            Count: 0,
+            Created: Now(),
+            Color: RGBA(0, 120, 212, 1)
+        }
+    )
+
+  # 23c. Nested records
+  OnSelect: =Set(varConfig, {User: {Name: "Admin", Role: "Owner"}, Settings: {Theme: "Dark"}})
+
+  # 23d. Record in LookUp
+  Text: =LookUp(colItems, ID = varID, {Title: Name, Sub: Description}).Title
+
+  # 23e. Empty record
+  OnSelect: =Set(varEmpty, {})
+
+# --- Section 24: Table Literals (pfx-punctuation: []) ------------------------
+# Expected: punctuation.definition.table.powerfx for [ ]
+
+  # 24a. Simple number table
+  Items: =[1, 2, 3, 4, 5]
+
+  # 24b. String table
+  Items: =["Red", "Green", "Blue"]
+
+  # 24c. Table of records
+  Items: =[{Value: "Option A", ID: 1}, {Value: "Option B", ID: 2}, {Value: "Option C", ID: 3}]
+
+  # 24d. Nested tables
+  Data: =[[1, 2], [3, 4], [5, 6]]
+
+  # 24e. Table in Filter
+  Visible: =Value(drp_Status.Selected.Value) in [1, 2, 3]
+
+  # 24f. Empty table
+  Items: =[]
+
+  # 24g. Table() function vs literal
+  Items: =Table({Value: "A"}, {Value: "B"}, {Value: "C"})
+
+# --- Section 25: Property Access Chains (pfx-property-access rule) -----------
+# Expected: variable.other.property.powerfx after each dot
+
+  # 25a. Simple property access
+  Text: =ThisItem.Name
+  Text: =User().Email
+  Text: =Self.Text
+
+  # 25b. Chained property access
+  Text: =ThisItem.Customer.Name
+  Text: =ThisItem.Customer.Address.City
+  Text: =gal_Items.Selected.Owner.Department.Name
+
+  # 25c. Property access after function
+  Text: =First(colItems).Name
+  Text: =LookUp(colUsers, ID = 1).Email
+  Text: =Last(Sort(colItems, Date)).Title
+
+  # 25d. Deep chain
+  Text: =ThisItem.Customer.Name.Length
+
+  # 25e. Property access on Parent/Self
+  Width: =Parent.Width
+  Text: =Self.Default
+
+# --- Section 26: in / exactin Keywords (pfx-keyword rule) -------------------
+# Expected: keyword.control.powerfx
+
+  Visible: =drp_Status.Selected.Value in ["Active", "Pending"]
+  Visible: =txtSearch.Text exactin ThisItem.Name
+  Visible: ="Admin" in varRoles
+  Visible: =varCode exactin colValidCodes
+
+# --- Section 27: As Keyword (pfx-keyword rule) ------------------------------
+# Expected: keyword.control.powerfx
+
+  Items: |-
+    =ForAll(
+        colItems As item,
+        {
+            Display: item.Name & " (" & item.Code & ")",
+            Value: item.ID
+        }
+    )
+
+  Text: =With({total: Sum(colItems, Amount) As t}, Text(t, "$#,##0.00"))
+
+# --- Section 28: YAML Quoted Strings (yaml-quoted-string rule) ---------------
+# Expected: string.quoted.double.pa-yaml, string.quoted.single.pa-yaml,
+#           constant.character.escape.pa-yaml
+
+  # 28a. Double-quoted YAML string (used in non-formula values)
+  Variant: "labelVariant"
+  Group: "Header Group"
+
+  # 28b. Single-quoted YAML string
+  Variant: 'labelVariant'
+  Group: 'Header Group'
+
+  # 28c. Escape in double-quoted YAML
+  Variant: "value with \"escaped\" quotes"
+
+  # 28d. Escape in single-quoted YAML (doubled apostrophe)
+  Variant: 'it''s a test'
+
+# --- Section 29: YAML Line Comments (comment rule) --------------------------
+# Expected: comment.line.number-sign.pa-yaml
+
+# This is a full-line YAML comment
+  # This is an indented YAML comment
+    # Deeply indented comment
+# Comment with special chars: !@#$%^&*()
+
+# --- Section 30: Block Scalar Indicator Variations ---------------------------
+# Expected: keyword.control.flow.block-scalar.pa-yaml
+
+  # 30a. Literal block, strip (most common in PA YAML)
+  OnSelect: |-
+    =Navigate(scr_Home)
+
+  # 30b. Literal block, keep
+  OnSelect: |+
+    =Navigate(scr_Home)
+
+  # 30c. Literal block, clip (default)
+  OnSelect: |
+    =Navigate(scr_Home)
+
+# --- Section 31: Complex Real-World Formulas ---------------------------------
+# These test combinations of multiple grammar rules together.
+
+  # 31a. Gallery Items with complex filter + sort + search
+  Items: |-
+    =Sort(
+        Filter(
+            AddColumns(
+                colProjects,
+                "OwnerName",
+                LookUp(colUsers, ID = Owner).FullName
+            ),
+            And(
+                Status <> "Archived",
+                Or(
+                    IsBlank(txtSearch.Text),
+                    txtSearch.Text in Name,
+                    txtSearch.Text in OwnerName
+                ),
+                Or(
+                    drp_Status.Selected.Value = "All",
+                    Status = drp_Status.Selected.Value
+                )
+            )
+        ),
+        If(
+            drp_Sort.Selected.Value = "Name",
+            Name,
+            CreatedDate
+        ),
+        If(
+            tog_Ascending.Value,
+            SortOrder.Ascending,
+            SortOrder.Descending
+        )
+    )
+
+  # 31b. Form submission with validation
+  OnSelect: |-
+    =If(
+        // Validate required fields
+        IsBlank(txtName.Text) || IsBlank(txtEmail.Text),
+        Notify(
+            "Please fill in all required fields",
+            NotificationType.Error
+        );
+        Set(varFormValid, false),
+        // Submit the form
+        Patch(
+            colSubmissions,
+            Defaults(colSubmissions),
+            {
+                Name: txtName.Text,
+                Email: Lower(Trim(txtEmail.Text)),
+                SubmittedBy: User().Email,
+                SubmittedDate: Now(),
+                Status: "Pending",
+                Reference: $"REF-{Text(CountRows(colSubmissions) + 1, "0000")}"
+            }
+        );
+        Notify(
+            $"Submission ""{txtName.Text}"" created successfully",
+            NotificationType.Success
+        );
+        ResetForm(frmSubmission);
+        Navigate(scr_Confirmation, ScreenTransition.Cover)
+    )
+
+  # 31c. UpdateContext with multiple variables
+  OnVisible: |-
+    =UpdateContext(
+        {
+            locLoading: true,
+            locError: Blank(),
+            locItems: Filter(
+                colItems,
+                Owner = User().Email && Active = true
+            ),
+            locCount: CountRows(
+                Filter(colItems, Owner = User().Email && Active = true)
+            )
+        }
+    );
+    =UpdateContext({locLoading: false})
+
+  # 31d. Switch statement
+  Fill: |-
+    =Switch(
+        ThisItem.Priority,
+        "Critical", RGBA(255, 0, 0, 1),
+        "High", RGBA(255, 165, 0, 1),
+        "Medium", RGBA(255, 255, 0, 1),
+        "Low", RGBA(0, 128, 0, 1),
+        RGBA(128, 128, 128, 1)
+    )
+
+  # 31e. Date arithmetic
+  Text: |-
+    =If(
+        DateDiff(Today(), ThisItem.DueDate) < 0,
+        $"Overdue by {Abs(DateDiff(Today(), ThisItem.DueDate))} days",
+        If(
+            DateDiff(Today(), ThisItem.DueDate) = 0,
+            "Due today",
+            $"Due in {DateDiff(Today(), ThisItem.DueDate)} days"
+        )
+    )
+
+  # 31f. Collection manipulation
+  OnSelect: |-
+    =ClearCollect(
+        colSummary,
+        AddColumns(
+            GroupBy(
+                Filter(colTransactions, Year(Date) = Year(Today())),
+                "Month",
+                "MonthData"
+            ),
+            "Total", Sum(MonthData, Amount),
+            "Count", CountRows(MonthData),
+            "Average", Average(MonthData, Amount)
+        )
+    )
+
+  # 31g. Error handling
+  OnSelect: |-
+    =IfError(
+        Patch(colItems, ThisRecord, {Status: "Updated"}),
+        Notify(
+            $"Error: {FirstError.Message}",
+            NotificationType.Error
+        );
+        Trace(
+            "Patch failed",
+            TraceSeverity.Error,
+            {
+                Record: ThisRecord.ID,
+                Error: FirstError.Message
+            }
+        )
+    )
+
+  # 31h. Concurrent data loads
+  OnVisible: |-
+    =Concurrent(
+        ClearCollect(colUsers, Office365Users.SearchUser()),
+        ClearCollect(colSites, SharePoint.GetTables("https://contoso.sharepoint.com/sites/data")),
+        Set(varProfile, Office365Users.MyProfile()),
+        Set(varConfig, LookUp(colConfig, Key = "AppVersion"))
+    );
+    =Set(varReady, true)
+
+# --- Section 32: AI Functions (newer Power Fx additions) ---------------------
+# Expected: entity.name.function.powerfx
+
+  Result: =AISummarize(ThisItem.Description)
+  Result: =AISentiment(txtFeedback.Text)
+  Result: =AIClassify(txtInput.Text, ["Positive", "Negative", "Neutral"])
+  Result: =AIExtract(txtDocument.Text, {Name: "", Date: "", Amount: 0})
+  Result: =AIReply(txtMessage.Text)
+  Result: =AITranslate(txtInput.Text, "es")
+
+# --- Section 33: JSON and ParseJSON -----------------------------------------
+# Expected: entity.name.function.powerfx
+
+  Text: =JSON(colItems, JSONFormat.IndentFour)
+  OnSelect: |-
+    =Set(
+        varParsed,
+        ParseJSON(txtInput.Text)
+    );
+    =Set(varName, Text(varParsed.name));
+    =Set(varAge, Value(varParsed.age))
+
+# --- Section 34: Mixed Punctuation Stress Test -------------------------------
+# Tests all punctuation rules in dense expressions
+
+  Result: =If(And(a, b), {x: [1, 2, 3], y: (a + b) * c}, {x: [], y: 0})
+  Items: =ForAll(Sequence(10), {Index: Value, Square: Value ^ 2, Even: Mod(Value, 2) = 0})
+  Text: =Concat(Filter(colItems, Active), Name & " (" & Text(Score) & ")", ", ")
+
+# --- Section 35: Edge Case — Formula Prefix Variations -----------------------
+# The = prefix is critical for Power Fx detection in PA YAML
+
+  # 35a. Formula with leading whitespace before = in block scalar
+  Text: |-
+    =Trim(
+        "  Hello  "
+    )
+
+  # 35b. Multiple = lines in block scalar
+  OnSelect: |-
+    =Set(varStep, 1)
+    =Set(varTotal, 0)
+    =ForAll(
+        Sequence(10),
+        Set(varTotal, varTotal + Value)
+    )
+
+# --- Section 36: Color Constants vs Color Enum --------------------------------
+# Color.X is an enum; RGBA() is a function
+
+  Fill: =Color.Red
+  Fill: =Color.OrangeRed
+  Fill: =Color.AliceBlue
+  Fill: =RGBA(255, 0, 0, 1)
+  Fill: =ColorFade(Color.Blue, 50%)
+  Fill: =ColorValue("#FF6600")
+
+# --- Section 37: And/Or/Not as Functions vs Keywords -------------------------
+# These appear in both pfx-function-call and pfx-keyword rules
+
+  # As keyword (no parens — keyword.control wins)
+  Visible: =And
+  Visible: =Or
+  Visible: =Not
+
+  # As function (with parens — entity.name.function wins)
+  Visible: =And(varA, varB)
+  Visible: =Or(varA, varB)
+  Visible: =Not(varA)
+
+# --- Section 38: Host/App/User Global Objects --------------------------------
+# Expected: entity.name.function.powerfx (they match function-call pattern)
+
+  Text: =User().FullName
+  Text: =User().Email
+  Text: =User().Image
+  Width: =App.Width
+  Height: =App.Height
+  Theme: =App.Theme
+  Text: =Host.TenantId
+
+# --- Section 39: Chained Method-Style Calls ----------------------------------
+# Power Fx doesn't have methods, but connector calls look similar
+
+  Items: =Office365Users.SearchUser({searchTerm: txtSearch.Text, top: 10})
+  Text: =SharePointIntegration.Selected.ID
+  OnSelect: =Launch("https://example.com", {target: "_blank"})
