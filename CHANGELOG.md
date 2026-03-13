@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.0.3 — 2026-03-13
+
+### Changed
+- README: precise function count (212) and enum count (59) with examples
+- README: added quoted enum members documentation
+- Engine-validated: all 132 PowerFx.Core functions confirmed present, plus 80 canvas-app host functions
+
 ## 0.0.2 — 2026-03-11
 
 ### Added

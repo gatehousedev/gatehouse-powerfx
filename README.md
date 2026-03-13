@@ -10,10 +10,11 @@ The `.pa.yaml` format is the modern source format for Microsoft Power Apps canva
 
 Full syntax highlighting for Power Fx formulas embedded in YAML property values:
 
-- **210+ built-in functions** — `Filter`, `LookUp`, `Set`, `Navigate`, `Patch`, `If`, `Switch`, and more
+- **212 built-in functions** — `Filter`, `LookUp`, `Set`, `Navigate`, `Patch`, `If`, `Switch`, and more
+- **59 built-in enums** — `Color.Red`, `DisplayMode.Edit`, `ScreenTransition.Fade`, `LayoutMode.Auto`, `Appearance.Primary`, and more
 - **String literals** — correct `""` escape handling (Power Fx convention, not backslash)
 - **Interpolated strings** — `$"Hello {User().FullName}"`
-- **Built-in enums** — `Color.Red`, `DisplayMode.Edit`, `ScreenTransition.Fade`
+- **Quoted enum members** — `DecimalPrecision.'0'` and similar
 - **Operators** — arithmetic, comparison (`<>`, `>=`), logical (`&&`, `||`), concatenation (`&`)
 - **Comments** — `//` line comments and `/* */` block comments
 - **Disambiguation** — `[@DataSource]` operator
