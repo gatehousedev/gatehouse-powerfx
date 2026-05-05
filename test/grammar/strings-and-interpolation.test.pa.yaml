@@ -1,0 +1,17 @@
+# SYNTAX TEST "source.pa-yaml" "Power Fx strings and interpolation"
+# Power Fx uses double-quoted strings inside formulas. Interpolated strings use
+# the $"…{expr}…" form. Both are public Power Fx language features.
+
+Screens:
+  scrHome:
+    Children:
+      - lblPlain:
+          Properties:
+            Text: ="hello"
+#                  ^^^^^^^ string.quoted.double.powerfx
+
+      - lblInterp:
+          Properties:
+            Text: =$"Hello {User().FullName}"
+#                  ^ string.interpolated.powerfx
+#                          ^ punctuation.section.interpolation.begin.powerfx

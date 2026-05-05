@@ -1,0 +1,16 @@
+# SYNTAX TEST "source.pa-yaml" "Structural keys at column 0"
+
+Screens:
+# <- keyword.control.structural.pa-yaml
+
+App:
+# <- keyword.control.structural.pa-yaml
+
+ComponentDefinitions:
+# <- keyword.control.structural.pa-yaml
+
+DataSources:
+# <- keyword.control.structural.pa-yaml
+
+EditorState:
+# <- keyword.control.structural.pa-yaml

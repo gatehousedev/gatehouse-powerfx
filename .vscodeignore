@@ -1,4 +1,44 @@
+# Files in this list are EXCLUDED from the published .vsix package.
+# Anything not listed here gets bundled into the marketplace download.
+# Keep the published extension as small as possible: grammar JSON, language
+# config, icons, manifest, and the user-facing README/LICENSE/CHANGELOG.
+
+# Source control + repo metadata
 .git
 .gitignore
-*.vsix
+.gitattributes
+.github/
+
+# Local-only working notes — must never be packaged into a published .vsix.
+# Mirrors the .gitignore rule for the same path.
+.local/
+
+# Dev / build artifacts (this branch ships pre-built grammar JSON only —
+# no compiled JS, no .NET binaries, no source maps)
+node_modules/
+out/
+pfx-check/
+src/
 test/
+tools/
+grammar/data/
+
+# Build / tooling configs
+tsconfig*.json
+.eslintrc*
+.prettierrc*
+biome.json
+package-lock.json
+bun.lock
+bun.lockb
+.editorconfig
+.vscode/
+.vscode-test/
+
+# Release artifacts — old .vsix files in repo root
+*.vsix
+
+# Editor / OS noise
+.DS_Store
+Thumbs.db
+*.log

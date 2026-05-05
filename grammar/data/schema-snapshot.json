@@ -1,0 +1,34 @@
+{
+  "source": "https://raw.githubusercontent.com/microsoft/PowerApps-Tooling/master/schemas/pa-yaml/v3.0/pa.schema.yaml",
+  "fetchedAt": "2026-05-05T08:04:46.669Z",
+  "schemaId": "http://powerapps.com/schemas/pa-yaml/v3.0/pa.schema",
+  "schemaTitle": "Microsoft Power Apps schema for app source yaml files (v3.0).",
+  "structuralKeys": [
+    "App",
+    "ComponentDefinitions",
+    "DataSources",
+    "EditorState",
+    "Screens"
+  ],
+  "controlInstanceSubKeys": [
+    "AccessAppScope",
+    "AllowCustomization",
+    "Children",
+    "ComponentLibraryUniqueName",
+    "ComponentName",
+    "ConnectorId",
+    "Control",
+    "CustomProperties",
+    "DefinitionType",
+    "Description",
+    "Group",
+    "IsLocked",
+    "Layout",
+    "MetadataKey",
+    "Parameters",
+    "Properties",
+    "Type",
+    "Variant"
+  ],
+  "controlTypeIdPattern": "^([A-Z][a-zA-Z0-9]*/)?[A-Z][a-zA-Z0-9]*(@\\d+\\.\\d+\\.\\d+)?$"
+}

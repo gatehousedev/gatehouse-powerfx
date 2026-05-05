@@ -1,0 +1,31 @@
+# SYNTAX TEST "source.pa-yaml" "Tier-A+B sub-keys: section-openers + inline-value sub-keys"
+# Verifies that the 6 sub-keys added in this commit (Properties, Children,
+# Parameters, CustomProperties, Description, Type) all get the
+# `support.type.property-name.pa-yaml` scope, matching the existing
+# Variant/Layout/IsLocked/etc. coverage.
+
+Screens:
+  scrHome:
+    Properties:
+#   ^^^^^^^^^^ support.type.property-name.pa-yaml
+      Fill: =RGBA(0, 0, 0, 1)
+    Children:
+#   ^^^^^^^^ support.type.property-name.pa-yaml
+      - btnSubmit:
+          Description: button that submits the form
+#         ^^^^^^^^^^^ support.type.property-name.pa-yaml
+
+ComponentDefinitions:
+  cmpFooter:
+    Description: Reusable footer component
+#   ^^^^^^^^^^^ support.type.property-name.pa-yaml
+    CustomProperties:
+#   ^^^^^^^^^^^^^^^^ support.type.property-name.pa-yaml
+      - prop1:
+          Type: Input
+#         ^^^^ support.type.property-name.pa-yaml
+          Parameters:
+#         ^^^^^^^^^^ support.type.property-name.pa-yaml
+            - p1:
+                Type: Text
+#               ^^^^ support.type.property-name.pa-yaml

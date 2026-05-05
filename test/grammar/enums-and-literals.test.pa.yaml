@@ -1,0 +1,27 @@
+# SYNTAX TEST "source.pa-yaml" "Power Fx enum members and primitive literals"
+# Examples synthesised from the public Power Fx enum reference
+# (learn.microsoft.com/power-platform/power-fx/reference) — Color, DisplayMode,
+# Align, ScreenTransition, Layout, etc.
+
+Screens:
+  scrHome:
+    Children:
+      - lblColor:
+          Properties:
+            Fill: =Color.Red
+#                  ^^^^^^^^^ support.constant.enum.powerfx
+
+      - lblMode:
+          Properties:
+            DisplayMode: =DisplayMode.Edit
+#                         ^^^^^^^^^^^^^^^^ support.constant.enum.powerfx
+
+      - lblBool:
+          Properties:
+            Visible: =true
+#                     ^^^^ constant.language.boolean.powerfx
+
+      - lblNum:
+          Properties:
+            Width: =320
+#                   ^^^ constant.numeric.powerfx

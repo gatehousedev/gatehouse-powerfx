@@ -1,0 +1,20 @@
+# SYNTAX TEST "source.pa-yaml" "Control type variations"
+
+Screens:
+  scrHome:
+    Children:
+      - btnPlain:
+          Control: Button
+#         ^^^^^^^ support.type.property-name.pa-yaml
+#                  ^^^^^^ entity.name.type.control.pa-yaml
+
+      - btnVersioned:
+          Control: Button@2.2.0
+#                  ^^^^^^ entity.name.type.control.pa-yaml
+#                        ^^^^^^ constant.numeric.version.pa-yaml
+
+      - btnNamespaced:
+          Control: Microsoft/FluentButton@1.0.0
+#                  ^^^^^^^^^ entity.name.namespace.control-prefix.pa-yaml
+#                            ^^^^^^^^^^^^ entity.name.type.control.pa-yaml
+#                                        ^^^^^^ constant.numeric.version.pa-yaml

@@ -2,3 +2,7 @@ node_modules/
 out/
 *.vsix
 .vscode-test/
+
+# Local-only working notes and plans — never published to public repo.
+# Anything under .local/ stays on catB's machine.
+.local/

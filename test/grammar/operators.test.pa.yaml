@@ -1,0 +1,16 @@
+# SYNTAX TEST "source.pa-yaml" "Power Fx comparison operators inside formulas"
+# All examples below are synthetic patterns derived from the public Power Fx
+# language reference (learn.microsoft.com/power-platform/power-fx/reference).
+
+Screens:
+  scrHome:
+    Children:
+      - lblNotEqual:
+          Properties:
+            Visible: =1 <> 2
+#                       ^^ keyword.operator.comparison.powerfx
+
+      - lblGreaterEqual:
+          Properties:
+            DisplayMode: =1 >= 2
+#                           ^^ keyword.operator.comparison.powerfx

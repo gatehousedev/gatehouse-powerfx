@@ -11,7 +11,7 @@ The `.pa.yaml` format is the modern source format for Microsoft Power Apps canva
 Full syntax highlighting for Power Fx formulas embedded in YAML property values:
 
 - **212 built-in functions** — `Filter`, `LookUp`, `Set`, `Navigate`, `Patch`, `If`, `Switch`, and more
-- **59 built-in enums** — `Color.Red`, `DisplayMode.Edit`, `ScreenTransition.Fade`, `LayoutMode.Auto`, `Appearance.Primary`, and more
+- **60 built-in enums** — `Color.Red`, `DisplayMode.Edit`, `ScreenTransition.Fade`, `LayoutMode.Auto`, `Appearance.Primary`, `DropShadow.Bold`, and more
 - **String literals** — correct `""` escape handling (Power Fx convention, not backslash)
 - **Interpolated strings** — `$"Hello {User().FullName}"`
 - **Quoted enum members** — `DecimalPrecision.'0'` and similar
@@ -23,12 +23,13 @@ Full syntax highlighting for Power Fx formulas embedded in YAML property values:
 
 The grammar understands the `.pa.yaml` schema:
 
-- **Structural keys** — `Screens`, `App`, `ComponentDefinitions`, `EditorState` highlighted as keywords
+- **Structural keys** — `Screens`, `App`, `ComponentDefinitions`, `DataSources`, `EditorState` highlighted as keywords (verified against the official [Microsoft PowerApps-Tooling schema](https://github.com/microsoft/PowerApps-Tooling/blob/master/schemas/pa-yaml/v3.0/pa.schema.yaml))
 - **Control types** — `Control: Classic/Button@2.2.0` with namespace, type, and version highlighting
 - **Property names** — `Fill`, `OnSelect`, `Text` highlighted distinctly from formulas
 - **Children lists** — control names in `- controlName:` highlighted as entity names
 - **Block scalars** — multi-line formulas after `|-` with per-line `=` prefix highlighting
-- **Metadata keys** — `Variant`, `Layout`, `IsLocked`, `DefinitionType` with value highlighting
+- **Section openers** — `Properties:`, `Children:`, `Parameters:`, `CustomProperties:` highlighted as structural metadata
+- **Inline-value sub-keys** — `Variant`, `Layout`, `IsLocked`, `Group`, `MetadataKey`, `DefinitionType`, `ComponentName`, `ComponentLibraryUniqueName`, `Description`, `Type` with value highlighting
 
 ### File icons
 

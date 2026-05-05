@@ -2,14 +2,16 @@
   "name": "gatehouse-powerfx",
   "displayName": "Gatehouse Power Fx",
   "description": "Syntax highlighting for Power Apps .pa.yaml files with embedded Power Fx formulas",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "publisher": "gatehousedev",
   "license": "MIT",
   "icon": "icons/icon.png",
   "engines": {
     "vscode": "^1.80.0"
   },
-  "categories": ["Programming Languages"],
+  "categories": [
+    "Programming Languages"
+  ],
   "keywords": [
     "power apps",
     "power fx",
@@ -31,8 +33,13 @@
     "languages": [
       {
         "id": "pa-yaml",
-        "aliases": ["PA YAML", "Power Apps YAML"],
-        "filenamePatterns": ["*.pa.yaml"],
+        "aliases": [
+          "PA YAML",
+          "Power Apps YAML"
+        ],
+        "filenamePatterns": [
+          "*.pa.yaml"
+        ],
         "configuration": "./language-configuration.json",
         "icon": {
           "light": "./icons/pa-yaml-light.svg",
@@ -47,5 +54,14 @@
         "path": "./syntaxes/pa-yaml.tmLanguage.json"
       }
     ]
+  },
+  "scripts": {
+    "test:grammar": "vscode-tmgrammar-test -g syntaxes/pa-yaml.tmLanguage.json \"test/grammar/*.test.pa.yaml\"",
+    "test": "npm run test:grammar && npm run regen:grammar -- --check",
+    "regen:grammar": "node tools/regen-grammar-symbols.mjs"
+  },
+  "devDependencies": {
+    "vscode-tmgrammar-test": "^0.1.3",
+    "yaml": "^2.8.4"
   }
 }

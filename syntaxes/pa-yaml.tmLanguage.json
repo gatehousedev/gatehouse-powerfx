@@ -11,6 +11,7 @@
     { "include": "#key-block-formula" },
     { "include": "#key-control-value" },
     { "include": "#key-metadata-value" },
+    { "include": "#key-metadata-section" },
     { "include": "#structural-key" },
     { "include": "#pa-key" },
     { "include": "#list-item-key" },
@@ -80,12 +81,21 @@
     },
 
     "key-metadata-value": {
-      "comment": "Variant/Layout/IsLocked/Group/MetadataKey/DefinitionType/ComponentName: value",
-      "match": "^(\\s*)(Variant|Layout|IsLocked|Group|MetadataKey|DefinitionType|ComponentName|ComponentLibraryUniqueName)(:\\s+)(.+)$",
+      "comment": "Inline-value structural sub-keys: Variant/Layout/IsLocked/Group/MetadataKey/DefinitionType/ComponentName/ComponentLibraryUniqueName/Description/Type: value",
+      "match": "^(\\s*)(Variant|Layout|IsLocked|Group|MetadataKey|DefinitionType|ComponentName|ComponentLibraryUniqueName|Description|Type)(:\\s+)(.+)$",
       "captures": {
         "2": { "name": "support.type.property-name.pa-yaml" },
         "3": { "name": "punctuation.separator.key-value.pa-yaml" },
         "4": { "name": "string.unquoted.value.pa-yaml" }
+      }
+    },
+
+    "key-metadata-section": {
+      "comment": "Block-opener structural sub-keys: Properties/Children/Parameters/CustomProperties (key followed by EOL only, no inline value)",
+      "match": "^(\\s*)(Properties|Children|Parameters|CustomProperties)(:)\\s*$",
+      "captures": {
+        "2": { "name": "support.type.property-name.pa-yaml" },
+        "3": { "name": "punctuation.separator.key-value.pa-yaml" }
       }
     },
 
@@ -214,7 +224,7 @@
 
     "pfx-builtin-enum": {
       "comment": "Built-in enums: Color.Red, DisplayMode.Edit, Align.Center, etc.",
-      "match": "\\b(Color|DisplayMode|Align|AlignInContainer|VerticalAlign|TextMode|TextFormat|TextInputType|TextPosition|Layout|LayoutAlignItems|LayoutDirection|LayoutJustifyContent|LayoutMode|LayoutOverflow|Overflow|ScreenTransition|Font|FontWeight|BorderStyle|PenMode|ImagePosition|ImageRotation|BarcodeType|MapStyle|Icon|LoadingSpinner|Transition|Direction|Notify|NotificationType|DateTimeZone|DateTimeFormat|StartOfWeek|SortOrder|Match|MatchOptions|JSONFormat|Trace|TraceSeverity|TraceOptions|ErrorKind|FormMode|FormPattern|GridStyle|LabelPosition|Live|ListItemTemplate|Themes|Appearance|ValidationState|TriggerOutput|DecimalPrecision|RemoveFlags|TimeUnit|TeamsTheme|VirtualKeyboardMode|PDFPasswordState|Zoom)\\.(([A-Za-z][A-Za-z0-9]*)|('[^']*'))\\b",
+      "match": "\\b(Color|DisplayMode|Align|AlignInContainer|VerticalAlign|TextMode|TextFormat|TextInputType|TextPosition|Layout|LayoutAlignItems|LayoutDirection|LayoutJustifyContent|LayoutMode|LayoutOverflow|Overflow|ScreenTransition|Font|FontWeight|BorderStyle|PenMode|ImagePosition|ImageRotation|BarcodeType|MapStyle|Icon|LoadingSpinner|Transition|Direction|Notify|NotificationType|DateTimeZone|DateTimeFormat|StartOfWeek|SortOrder|Match|MatchOptions|JSONFormat|Trace|TraceSeverity|TraceOptions|ErrorKind|FormMode|FormPattern|GridStyle|LabelPosition|Live|ListItemTemplate|Themes|Appearance|ValidationState|TriggerOutput|DecimalPrecision|RemoveFlags|TimeUnit|TeamsTheme|VirtualKeyboardMode|PDFPasswordState|Zoom|DropShadow)\\.(([A-Za-z][A-Za-z0-9]*)|('[^']*'))\\b",
       "name": "support.constant.enum.powerfx"
     },
 
